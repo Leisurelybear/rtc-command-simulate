@@ -2,6 +2,7 @@ package rtc;
 
 public class RtcClient {
 
+    // 使用标志位来控制线程的停止
     private boolean shutdown = true;
 
     public RtcClient(String uuid) {
