@@ -1,5 +1,8 @@
 package rtc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RtcClient {
 
     // 使用标志位来控制线程的停止
@@ -22,11 +25,32 @@ public class RtcClient {
 
                 // 模拟中间接收到消息
                 if (i == 10) {
-                    // 执行命令
-                    RtcMessage cmdMsg = new RtcMessage();
-                    cmdMsg.key = "MOVE";
-                    cmdMsg.value = 1000;
-                    e.handleMessage(cmdMsg);
+
+                    // 正确顺序，0-MOVE、1-SPIN、2-MOVE、3-SPIN、4-MOVE
+                    // 先生成顺序消息
+                    List<RtcMessage> msgList = new ArrayList<>(); // 使用list装
+                    for(int j = 0; j < 5; j++){
+                        RtcMessage cmdMsg = new RtcMessage();
+                        if ((j & 1) == 0){
+                            // 执行命令
+                            cmdMsg.key = "MOVE";
+                            cmdMsg.value = 1000;
+                        }else {
+                            // 执行命令
+                            cmdMsg.key = "SPIN";
+                            cmdMsg.value = 90;
+                        }
+                        cmdMsg.seq = j;
+                        msgList.add(cmdMsg);
+                    }
+                    // 然后开启多线程发送指令
+                    msgList.forEach(msg -> {
+                        new Thread(() -> {
+                            e.handleMessage(msg);
+                        }).start();
+                    });
+
+
                 }
 
                 // 模拟掉线

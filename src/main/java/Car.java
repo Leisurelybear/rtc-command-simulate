@@ -68,6 +68,7 @@ public class Car {
             }else {
                 // 执行rtc消息传来的命令，让小车进行相应的动作
                 executeCommand(receiveMsg.key, receiveMsg.value);
+                System.out.println("[ Seq: " + receiveMsg.seq + ", Cmd: " + receiveMsg.key + ", val: " + receiveMsg.value + " ]");
             }
         });
     }
