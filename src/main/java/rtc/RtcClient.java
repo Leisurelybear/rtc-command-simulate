@@ -7,6 +7,7 @@ public class RtcClient {
 
     // 使用标志位来控制线程的停止
     private boolean shutdown = true;
+    private static final int MULTIPLE_MESSAGE_SEND_TIMES = 3;
 
     public RtcClient(String uuid) {
         shutdown = false;
@@ -46,7 +47,10 @@ public class RtcClient {
                     // 然后开启多线程发送指令
                     msgList.forEach(msg -> {
                         new Thread(() -> {
-                            e.handleMessage(msg);
+                            // 多倍发包
+                            for (int j = 0; j < MULTIPLE_MESSAGE_SEND_TIMES; j++) {
+                                e.handleMessage(msg);
+                            }
                         }).start();
                     });
 

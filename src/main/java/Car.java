@@ -1,6 +1,7 @@
 import rtc.RtcClient;
 import rtc.RtcMessage;
 
+import java.util.Random;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
@@ -141,12 +142,17 @@ public class Car {
 
         // 开始监听 uuid room 的 rtc的消息
         rtcClient.onListening(receiveMsg -> {
-
             // 判断如果是心跳，则更新上一次探活时间
             if (receiveMsg.key == null) {
                 lastHeartbeatTime = receiveMsg.time;
             } else {
                 // 执行rtc消息传来的命令，让小车进行相应的动作
+
+                if(new Random().nextBoolean()){
+                    // 模拟随机丢包
+                    System.out.println("消息丢失啦【" + receiveMsg.seq + ", "+receiveMsg.key + ": " + receiveMsg.value + "】");
+                    return;
+                }
 //                executeCommand(receiveMsg.key, receiveMsg.value);
 //                System.out.println("[ Seq: " + receiveMsg.seq + ", Cmd: " + receiveMsg.key + ", val: " + receiveMsg.value + " ]");
                 addWaitingQueue(receiveMsg); // 添加等待队列，来代替直接消费，这里使用优先队列保证顺序
