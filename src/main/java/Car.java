@@ -149,7 +149,7 @@ public class Car {
                 // 执行rtc消息传来的命令，让小车进行相应的动作
 //                executeCommand(receiveMsg.key, receiveMsg.value);
 //                System.out.println("[ Seq: " + receiveMsg.seq + ", Cmd: " + receiveMsg.key + ", val: " + receiveMsg.value + " ]");
-                addWaitingQueue(receiveMsg); // 添加等待队列，来代替直接消费
+                addWaitingQueue(receiveMsg); // 添加等待队列，来代替直接消费，这里使用优先队列保证顺序
             }
         });
     }
@@ -158,6 +158,7 @@ public class Car {
      * @param receiveMsg 接收到的消息
      */
     private void addWaitingQueue(RtcMessage receiveMsg) {
+        // 加个锁吧~
         lock.lock();
         waitingQueue.offer(receiveMsg);
         lock.unlock();
