@@ -7,6 +7,7 @@ public class RtcClient {
 
     // 使用标志位来控制线程的停止
     private boolean shutdown = true;
+    // 这里可以设置多倍发包的倍数
     private static final int MULTIPLE_MESSAGE_SEND_TIMES = 3;
 
     public RtcClient(String uuid) {

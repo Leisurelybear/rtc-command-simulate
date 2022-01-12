@@ -64,6 +64,11 @@ public class Car {
 //                    System.out.println("null message.");
                 } else {
                     RtcMessage receiveMsg = waitingQueue.peek();
+                    // 如果队首的Command的Seq小于当前执行的lastSeq，那么说明这条命令已经被执行了，所以丢掉
+                    if (receiveMsg.seq < lastSeq.get()){
+                        waitingQueue.poll(); // 丢掉
+                        continue; // 直接进行下一轮
+                    }
 
                     // 如果本次有消息
                     // 如果这次的消息序列号不等于上次+1，即 seq != lastSeq + 1，则还需要再把它入队列，再等等
@@ -153,12 +158,24 @@ public class Car {
                     System.out.println("消息丢失啦【" + receiveMsg.seq + ", "+receiveMsg.key + ": " + receiveMsg.value + "】");
                     return;
                 }
+//                if (isDuplicatedCommand(receiveMsg)){
+//                    System.out.println("重复命令，丢弃【" + receiveMsg.seq + ", "+receiveMsg.key + ": " + receiveMsg.value + "】");
+//                    return;
+//                }
 //                executeCommand(receiveMsg.key, receiveMsg.value);
 //                System.out.println("[ Seq: " + receiveMsg.seq + ", Cmd: " + receiveMsg.key + ", val: " + receiveMsg.value + " ]");
                 addWaitingQueue(receiveMsg); // 添加等待队列，来代替直接消费，这里使用优先队列保证顺序
             }
         });
     }
+//
+//    private boolean isDuplicatedCommand(RtcMessage receiveMsg) {
+//        lock.lock();
+//        if (receiveMsg.seq < lastSeq.get()){
+//
+//        }
+//        return false;
+//    }
 
     /**
      * @param receiveMsg 接收到的消息
