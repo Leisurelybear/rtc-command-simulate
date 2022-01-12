@@ -14,6 +14,7 @@ public class RtcClient {
         shutdown = false;
     }
 
+
     // 监听发送来的心跳和消息，用线程来模拟
     public void onListening(RtcEvent e) {
 
